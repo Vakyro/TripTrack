@@ -1,0 +1,60 @@
+{
+  "dashboard": {
+    "title": "Dashboard",
+    "startTrip": "Start Trip",
+    "truckIssues": "Truck Issues",
+    "maintenance": "Maintenance",
+    "recentActivity": "Recent Activity",
+    "recentActivityItems": {
+      "completedTrip": "Completed trip: NYC to LA (2 hours ago)",
+      "submittedMaintenance": "Submitted maintenance report (1 day ago)",
+      "reportedIssue": "Reported truck issue: Flat tire (2 days ago)",
+      "startedTrip": "Started trip: Miami to Atlanta (3 days ago)"
+    }
+  },
+  "navigation": {
+    "dashboard": "Dashboard",
+    "delivery": "Delivery",
+    "maintenance": "Maintenance",
+    "issues": "Issues",
+    "profile": "Profile"
+  },
+  "profile": {
+    "title": "User Profile",
+    "name": "Name",
+    "role": "Role",
+    "vehicle": "Assigned Vehicle",
+    "language": "Language",
+    "logout": "Log out"
+  },
+  "languages": {
+    "en": "English",
+    "es": "Spanish",
+    "pt": "Portuguese"
+  },
+  "delivery": {
+    "title": "New Delivery Trip",
+    "origin": "Origin",
+    "destination": "Destination",
+    "date": "Date",
+    "notes": "Notes",
+    "submit": "Submit"
+  },
+  "maintenance": {
+    "title": "Log Maintenance",
+    "vehicleId": "Vehicle ID",
+    "maintenanceType": "Maintenance Type",
+    "date": "Date",
+    "description": "Description",
+    "submit": "Submit"
+  },
+  "issues": {
+    "title": "Report Issue",
+    "vehicleId": "Vehicle ID",
+    "issueType": "Issue Type",
+    "date": "Date",
+    "description": "Description",
+    "submit": "Submit"
+  }
+}
+

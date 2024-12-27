@@ -1,0 +1,60 @@
+{
+  "dashboard": {
+    "title": "Panel de Control",
+    "startTrip": "Iniciar Viaje",
+    "truckIssues": "Problemas del Camión",
+    "maintenance": "Mantenimiento",
+    "recentActivity": "Actividad Reciente",
+    "recentActivityItems": {
+      "completedTrip": "Viaje completado: NYC a LA (hace 2 horas)",
+      "submittedMaintenance": "Informe de mantenimiento enviado (hace 1 día)",
+      "reportedIssue": "Problema reportado: Neumático pinchado (hace 2 días)",
+      "startedTrip": "Viaje iniciado: Miami a Atlanta (hace 3 días)"
+    }
+  },
+  "navigation": {
+    "dashboard": "Panel",
+    "delivery": "Entrega",
+    "maintenance": "Mantenimiento",
+    "issues": "Problemas",
+    "profile": "Perfil"
+  },
+  "profile": {
+    "title": "Perfil de Usuario",
+    "name": "Nombre",
+    "role": "Rol",
+    "vehicle": "Vehículo Asignado",
+    "language": "Idioma",
+    "logout": "Cerrar sesión"
+  },
+  "languages": {
+    "en": "Inglés",
+    "es": "Español",
+    "pt": "Portugués"
+  },
+  "delivery": {
+    "title": "Nuevo Viaje de Entrega",
+    "origin": "Origen",
+    "destination": "Destino",
+    "date": "Fecha",
+    "notes": "Notas",
+    "submit": "Enviar"
+  },
+  "maintenance": {
+    "title": "Registrar Mantenimiento",
+    "vehicleId": "ID del Vehículo",
+    "maintenanceType": "Tipo de Mantenimiento",
+    "date": "Fecha",
+    "description": "Descripción",
+    "submit": "Enviar"
+  },
+  "issues": {
+    "title": "Reportar Problema",
+    "vehicleId": "ID del Vehículo",
+    "issueType": "Tipo de Problema",
+    "date": "Fecha",
+    "description": "Descripción",
+    "submit": "Enviar"
+  }
+}
+

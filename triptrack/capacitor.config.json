@@ -1,0 +1,10 @@
+{
+  "appId": "com.triptrack.app",
+  "appName": "triptrack",
+  "webDir": "dist",
+  "plugins": {
+    "SplashScreen": {
+      "launchAutoHide": false
+    }
+  }
+}
