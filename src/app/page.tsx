@@ -22,7 +22,7 @@ export default async function Home() {
       <main className="flex flex-col items-center justify-center w-full flex-1 px-20 text-center">
         <Logo size={80} />
         <h1 className="text-6xl font-bold">
-          Welcome to TripTrack
+          Welcome to Gay
         </h1>
         <p className="mt-3 text-2xl">
           Your trusted companion for managing routes, logs, and reports.
