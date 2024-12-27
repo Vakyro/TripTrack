@@ -1,6 +1,6 @@
 'use client'
 import { Toaster } from 'sonner' // Importa el componente Toaster
-import { Link } from 'next-view-transitions'
+import Link from 'next/link'
 import { useRouter, usePathname } from 'next/navigation'
 import { Button } from "@/components/ui/button"
 import { Home, Truck, PenToolIcon as Tool, AlertTriangle, User, MessageCircle } from 'lucide-react'
