@@ -1,114 +1,90 @@
-'use client'
-import { useRouter } from 'next/navigation'
-import { useEffect, useState } from 'react'
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { createClient } from "../../../../utils/supabase/client"
-import dynamic from 'next/dynamic'
-import 'leaflet/dist/leaflet.css'
-import { toast } from 'sonner'
+'use client';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { createClient } from "../../../../utils/supabase/client";
+import dynamic from 'next/dynamic';
+import 'leaflet/dist/leaflet.css';
+import L from 'leaflet'; // Importar L desde leaflet
+import { toast } from 'sonner';
 
-// Cargar react-leaflet dinámicamente (solo en cliente)
-const { MapContainer, TileLayer, Marker, Popup } = dynamic(() => import('react-leaflet'), {
-  ssr: false // Deshabilitar SSR para esta parte del código
-})
+// Importar componentes de react-leaflet dinámicamente
+const MapContainer = dynamic(() => import('react-leaflet').then(mod => mod.MapContainer), { ssr: false });
+const TileLayer = dynamic(() => import('react-leaflet').then(mod => mod.TileLayer), { ssr: false });
+const Marker = dynamic(() => import('react-leaflet').then(mod => mod.Marker), { ssr: false });
+const Popup = dynamic(() => import('react-leaflet').then(mod => mod.Popup), { ssr: false });
 
 export default function TripDetailsPage() {
-  const router = useRouter()
-  const [tripDetails, setTripDetails] = useState(null)
-  const [userLocation, setUserLocation] = useState(null) // Guardar la ubicación del usuario
-  const [mapInstance, setMapInstance] = useState(null) // Guardar la instancia del mapa
-  const [marker, setMarker] = useState(null) // Guardar la referencia del marcador
-  const [isClient, setIsClient] = useState(false) // Estado para saber si estamos en el cliente
-
-  useEffect(() => {
-    // Establecer que estamos en el cliente
-    setIsClient(true)
-  }, [])
+  const router = useRouter();
+  const [tripDetails, setTripDetails] = useState(null);
+  const [userLocation, setUserLocation] = useState(null);
 
   // Obtener los detalles del viaje
   useEffect(() => {
-    const storedTripDetails = sessionStorage.getItem('tripDetails')
+    const storedTripDetails = sessionStorage.getItem('tripDetails');
     if (storedTripDetails) {
-      setTripDetails(JSON.parse(storedTripDetails))
+      setTripDetails(JSON.parse(storedTripDetails));
     } else {
-      console.warn('No trip details found in sessionStorage')
-      router.push('/dashboard') // Redirigir si no hay datos
+      console.warn('No trip details found in sessionStorage');
+      router.push('/dashboard');
     }
-  }, [router])
+  }, [router]);
 
   // Obtener la ubicación del usuario
   useEffect(() => {
-    if (isClient && navigator.geolocation) {
+    if (navigator.geolocation) {
       const geoWatchId = navigator.geolocation.watchPosition(
         (position) => {
-          const newLocation = {
+          setUserLocation({
             lat: position.coords.latitude,
-            lng: position.coords.longitude
-          }
-          setUserLocation(newLocation) // Actualizar la ubicación
-
-          // Si la instancia del mapa está disponible, actualizamos la vista
-          if (mapInstance) {
-            mapInstance.setView(newLocation, mapInstance.getZoom()) // Cambiar la vista del mapa
-          }
-
-          // Si el marcador no está creado, lo creamos
-          if (marker) {
-            marker.setLatLng(newLocation) // Actualizamos la ubicación del marcador
-          }
+            lng: position.coords.longitude,
+          });
         },
         (error) => {
-          console.error("Error al obtener la ubicación:", error)
+          console.error("Error al obtener la ubicación:", error);
         },
         {
-          enableHighAccuracy: true, // Precisión alta
-          maximumAge: 0, // Sin caché
-          timeout: 5000 // Tiempo de espera para obtener la ubicación
+          enableHighAccuracy: true,
+          maximumAge: 0,
+          timeout: 5000,
         }
       );
 
-      // Limpiar la observación de geolocalización cuando el componente se desmonte
       return () => {
-        if (geoWatchId) {
-          navigator.geolocation.clearWatch(geoWatchId);
-        }
-      }
+        navigator.geolocation.clearWatch(geoWatchId);
+      };
     }
-  }, [isClient, mapInstance, marker]); // Dependemos de isClient, mapInstance y marker
+  }, []);
 
   // Función para finalizar el viaje
   const handleEndTrip = async () => {
-    const supabase = createClient()
-
-    const driverId = tripDetails.driverid
-
-    console.log({ driverId })
+    const supabase = createClient();
+    const driverId = tripDetails.driverid;
 
     const { error } = await supabase
-      .from('deliveries') // Suponiendo que la tabla se llama 'deliveries'
-      .update({ status: 'completed' }) // Actualizamos el estatus a 'completed'
-      .eq('driverid', driverId) // Asegúrate de que el campo 'driverid' se corresponda con el identificador
+      .from('deliveries')
+      .update({ status: 'completed' })
+      .eq('driverid', driverId);
 
     if (error) {
-      console.error('Error updating trip status:', error)
+      console.error('Error updating trip status:', error);
     } else {
-      console.log('Trip ended and status updated')
-      toast.success('Delivery end successfully!');
-      router.push('/dashboard') // Redirigir después de la actualización
+      toast.success('Delivery ended successfully!');
+      router.push('/dashboard');
     }
-  }
+  };
 
-  if (!tripDetails || !userLocation || !isClient) {
-    return <p>Loading...</p> // Esperamos que la ubicación, los detalles del viaje y el cliente estén disponibles
+  if (!tripDetails || !userLocation) {
+    return <p>Loading...</p>;
   }
 
   // Crear un ícono personalizado para el marcador
   const userIcon = new L.Icon({
-    iconUrl: 'https://cdn-icons-png.flaticon.com/512/1782/1782249.png', // Asegúrate de que sea un enlace directo a una imagen
-    iconSize: [32, 32], // Tamaño del ícono
-    iconAnchor: [16, 32], // Punto donde el ícono se "ancla" al marcador
-    popupAnchor: [0, -32] // Ajuste de la posición del popup
+    iconUrl: 'https://cdn-icons-png.flaticon.com/512/1782/1782249.png',
+    iconSize: [32, 32],
+    iconAnchor: [16, 32],
+    popupAnchor: [0, -32],
   });
 
   return (
@@ -131,18 +107,12 @@ export default function TripDetailsPage() {
           <CardTitle className="text-xl font-bold">Route Map</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="relative w-64 h-64 mx-auto">
-            <MapContainer
-              center={userLocation}
-              zoom={13}
-              className="h-full w-full"
-              whenCreated={setMapInstance} // Guardar la instancia del mapa
-            >
+          <div className="relative w-64 h-64 mx-auto z-0">
+            <MapContainer center={userLocation} zoom={13} className="h-full w-full">
               <TileLayer
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 attribution="&copy; <a href='https://www.openstreetmap.org/copyright'>OpenStreetMap</a> contributors"
               />
-              {/* Usar el ícono personalizado en el marcador */}
               <Marker position={userLocation} icon={userIcon}>
                 <Popup>Your current location</Popup>
               </Marker>
@@ -155,5 +125,5 @@ export default function TripDetailsPage() {
         <Button onClick={handleEndTrip} size="lg">End Trip</Button>
       </div>
     </div>
-  )
+  );
 }
