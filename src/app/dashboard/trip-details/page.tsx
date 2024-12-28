@@ -1,4 +1,5 @@
 'use client';
+
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { Button } from "@/components/ui/button";
@@ -6,10 +7,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { createClient } from "../../../../utils/supabase/client";
 import dynamic from 'next/dynamic';
 import 'leaflet/dist/leaflet.css';
-import L from 'leaflet'; // Importar L desde leaflet
+import L from 'leaflet';
 import { toast } from 'sonner';
 
-// Importar componentes de react-leaflet dinámicamente
+
+// Importar componentes dinámicos de react-leaflet
 const MapContainer = dynamic(() => import('react-leaflet').then(mod => mod.MapContainer), { ssr: false });
 const TileLayer = dynamic(() => import('react-leaflet').then(mod => mod.TileLayer), { ssr: false });
 const Marker = dynamic(() => import('react-leaflet').then(mod => mod.Marker), { ssr: false });
@@ -20,20 +22,20 @@ export default function TripDetailsPage() {
   const [tripDetails, setTripDetails] = useState(null);
   const [userLocation, setUserLocation] = useState(null);
 
-  // Obtener los detalles del viaje
+  // Obtener los detalles del viaje desde sessionStorage
   useEffect(() => {
     const storedTripDetails = sessionStorage.getItem('tripDetails');
     if (storedTripDetails) {
       setTripDetails(JSON.parse(storedTripDetails));
     } else {
-      console.warn('No trip details found in sessionStorage');
+      console.warn('No se encontraron detalles del viaje en sessionStorage');
       router.push('/dashboard');
     }
   }, [router]);
 
-  // Obtener la ubicación del usuario
+  // Obtener la ubicación del usuario con geolocalización
   useEffect(() => {
-    if (navigator.geolocation) {
+    if (typeof window !== 'undefined' && navigator.geolocation) {
       const geoWatchId = navigator.geolocation.watchPosition(
         (position) => {
           setUserLocation({
@@ -57,7 +59,7 @@ export default function TripDetailsPage() {
     }
   }, []);
 
-  // Función para finalizar el viaje
+  // Finalizar el viaje y actualizar el estado en Supabase
   const handleEndTrip = async () => {
     const supabase = createClient();
     const driverId = tripDetails.driverid;
@@ -68,15 +70,15 @@ export default function TripDetailsPage() {
       .eq('driverid', driverId);
 
     if (error) {
-      console.error('Error updating trip status:', error);
+      console.error('Error al actualizar el estado del viaje:', error);
     } else {
-      toast.success('Delivery ended successfully!');
+      toast.success('¡Viaje finalizado exitosamente!');
       router.push('/dashboard');
     }
   };
 
   if (!tripDetails || !userLocation) {
-    return <p>Loading...</p>;
+    return <p>Cargando...</p>;
   }
 
   // Crear un ícono personalizado para el marcador
@@ -89,40 +91,43 @@ export default function TripDetailsPage() {
 
   return (
     <div className="space-y-6">
+      {/* Detalles del viaje */}
       <Card className="w-full max-w-2xl mx-auto">
         <CardHeader>
-          <CardTitle className="text-2xl font-bold">Trip Details</CardTitle>
+          <CardTitle className="text-2xl font-bold">Detalles del Viaje</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            <p><strong>Destination:</strong> {tripDetails.destination}</p>
-            <p><strong>Date:</strong> {tripDetails.date}</p>
-            <p><strong>Charge Number:</strong> {tripDetails.chargeNumber}</p>
+            <p><strong>Destino:</strong> {tripDetails.destination}</p>
+            <p><strong>Fecha:</strong> {tripDetails.date}</p>
+            <p><strong>Número de Carga:</strong> {tripDetails.chargeNumber}</p>
           </div>
         </CardContent>
       </Card>
 
+      {/* Mapa */}
       <Card className="w-full max-w-2xl mx-auto">
         <CardHeader>
-          <CardTitle className="text-xl font-bold">Route Map</CardTitle>
+          <CardTitle className="text-xl font-bold">Mapa de la Ruta</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="relative w-64 h-64 mx-auto z-0">
+          <div className="relative w-full h-64 z-0">
             <MapContainer center={userLocation} zoom={13} className="h-full w-full">
               <TileLayer
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 attribution="&copy; <a href='https://www.openstreetmap.org/copyright'>OpenStreetMap</a> contributors"
               />
               <Marker position={userLocation} icon={userIcon}>
-                <Popup>Your current location</Popup>
+                <Popup>Tu ubicación actual</Popup>
               </Marker>
             </MapContainer>
           </div>
         </CardContent>
       </Card>
 
+      {/* Botón para finalizar el viaje */}
       <div className="flex justify-center">
-        <Button onClick={handleEndTrip} size="lg">End Trip</Button>
+        <Button onClick={handleEndTrip} size="lg">Finalizar Viaje</Button>
       </div>
     </div>
   );

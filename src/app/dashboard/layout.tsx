@@ -35,9 +35,24 @@ function DashboardLayoutContent({
 
   const isActive = (path: string) => pathname === path
 
-  const [messages, setMessages] = useState<Message[]>([])
-  const [user, setUser] = useState(null)
-  const [users, setUsers] = useState<User[]>([])
+  type Message = {
+    id: string;
+    senderid: string;
+    receiverid: string;
+    message: string;
+    createdat: string;
+  };
+  
+  type User = {
+    id: string;
+    auth_user_id: string;
+    firstname: string;
+    lastname: string;
+  };
+  
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [user, setUser] = useState<User | null>(null); // `null` es un valor válido al principio
+  const [users, setUsers] = useState<User[]>([]);  
   const [inputMessage, setInputMessage] = useState('')
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
